@@ -30,12 +30,19 @@
 //     console.log("server is working")
 // })
 
+
 import express from "express";
 import path from "path"
+import mongoose from "mongoose";
+
+mongoose.connect("127.0.0.1:27017")
 
 const server = express();
 server.use(express.static(path.join(path.resolve(), "public")));
-server.use(express.urlencoded({ extended: true}))
+server.use(express.urlencoded({ extended: true }))  // print data from the server
+
+
+
 
 
 // server.get("/" , (req, res) =>{    // we can send somthing on our server using this express syntex
@@ -78,13 +85,32 @@ server.use(express.urlencoded({ extended: true}))
 // server.delete("/users/:id" , (req , res) =>{
 //     message : `Delete the user id with ${req.params.id}`
 // })
+
+const users =[]
 server.set("view engine" , "ejs")
 
 server.get("/" , (req , res) => {
-    res.render("index", {name: "Utkarsh"})  // to render html/ejs element
+    res.render("index", { name: "Utkarsh"})  // to render html/ejs element
 })
-server.post("/" , (req , res) => {
-    console.log(req.body)
+
+server.get("/add" , (req , res) => {
+    res.send("nice")  // to render html/ejs element
+})
+server.get("/success" , (req , res) => {
+    res.render("success")  // this is routing to success page
+})
+
+server.post("/contact" , (req , res) => {
+
+    users.push({ username: req.body.name , email: req.body.email})
+
+    res.redirect("/success")
+})
+
+server.get("/users" , (req , res) => {
+    res.json({
+        users,     // this will provide the data given to the form input and will store as a array object
+    })
 })
 server.listen(4000 , () =>{
     console.log("server is running")
